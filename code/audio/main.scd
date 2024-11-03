@@ -27,12 +27,12 @@ s.reboot;
 var path = PathName(thisProcess.nowExecutingPath);
 3.do { path = PathName(path.parentPath) };
 
-~nLayers = 4;
 ~dataPath = path.fullPath ++ "data/";
 ~codePath = PathName.new(thisProcess.nowExecutingPath).parentPath;
-(~codePath ++ "functions.scd").load;
-(~codePath ++ "synthdefs.scd").load;
-(~codePath ++ "oscdefs.scd").load;
+(~codePath ++ "processes/globals.scd").load;
+(~codePath ++ "processes/functions.scd").load;
+(~codePath ++ "defs/synthdefs.scd").load;
+(~codePath ++ "defs/oscdefs.scd").load;
 )
 
 (

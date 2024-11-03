@@ -18,8 +18,9 @@ let datasetsLoaded = 0;
 const totalDatasets = DATASET_CONFIGS.length;
 
 // Start loading datasets
-for (let i = 0; i < DATASET_CONFIGS.length; i++) {
-    loadDataset(i).then(() => {
+for (let i = 0; i < totalDatasets; i++) {
+    let variant = DATASET_CONFIGS[i].variants[Math.floor(Math.random() * DATASET_CONFIGS[i].variants.length)];
+    loadDataset(i, variant).then(() => {
         datasetsLoaded++;
         if (datasetsLoaded === totalDatasets) {
             animate();

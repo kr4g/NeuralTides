@@ -21,14 +21,21 @@
 
 ~tr = OSCdef(\handleTrig, { |msg|
 	var id = msg[2], lfo = msg[3];
+	// if (lfo < ~thresh && ~belowThresh[id] == False) {
+	// 	var variant = ~variants[id].choose;
+	// 	~belowThresh[id] = True;
+	// 	// msg.postln;
+	// 	NetAddr("127.0.0.1", 7400).sendMsg("/reload", id, variant);
+	// };
+	//
+	// if (lfo >= ~thresh && ~belowThresh[id] == True) { ~belowThresh[id] = False; };
+
 	NetAddr("127.0.0.1", 7400).sendMsg("/layer", id, lfo);
 }, '/tr');
 
 // ------------------------------------------------------------------------------------------------------------
 
 ~pos = OSCdef(\position, { |msg|
-	// msg.postln;
-	// var n = NetAddr("127.0.0.1", 7400);
 	var x = msg[1], y = msg[2], dur = msg[3];
 	~point.setn(0, [x, y]);
 	~nLayers.do{ |i|

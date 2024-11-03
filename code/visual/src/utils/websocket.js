@@ -82,7 +82,7 @@ function initWebSocket() {
                 break;
                 
             case '/reload':
-                reloadLayerVariant(msg[1] - 1);
+                reloadLayerVariant(msg[1] - 1, msg[2]);
                 break;
                 
             case '/pos':

@@ -1,16 +1,4 @@
 (
-~point = Buffer.alloc(s, 2);
-~previous = Dictionary.new;
-4.do{ |i| ~previous[i + 1] = nil };
-
-~synths = Dictionary.new;
-~synthQueue = (
-	1: [],
-	2: [],
-	3: [],
-	4: []
-);
-
 ~initializeData = { |numLayers|
 	~data = Dictionary.new;
 	numLayers.do { |i|
@@ -33,6 +21,8 @@
 
 		~synths[layerId][\lfo] = Synth(\lfo, [
 			\layerId, layerId,
+			\minRange, 0.0,
+			\maxRange, 0.8,
 			\in, ~lfoBuses[i],
 			\out, 0
 		]);
@@ -58,7 +48,6 @@
 		\amp, amp,
 		\duration, duration,
 		\alpha, alpha,
-		// \grainSize, 0,
 		\out, bus
 	]).onFree();
 
