@@ -1,0 +1,17 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "WebSocket and OSC server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "ws": "^8.x.x",
+    "node-osc": "^8.x.x"
+  },
+  "devDependencies": {
+    "nodemon": "^3.x.x"
+  }
+}
