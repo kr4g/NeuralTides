@@ -22,23 +22,25 @@ s.newBusAllocators;
 s.reboot;
 )
 
+
 (
 var path = PathName(thisProcess.nowExecutingPath);
 3.do { path = PathName(path.parentPath) };
+
+~nLayers = 4;
 ~dataPath = path.fullPath ++ "data/";
 ~codePath = PathName.new(thisProcess.nowExecutingPath).parentPath;
 (~codePath ++ "functions.scd").load;
 (~codePath ++ "synthdefs.scd").load;
+(~codePath ++ "oscdefs.scd").load;
 )
 
 (
-~nLayers = 4;
 ~initializeData.(~nLayers);
 )
 
 (
 ~setupBuses.(~nLayers);
-(PathName.new(thisProcess.nowExecutingPath).parentPath ++ "oscdefs.scd").load;
+~fx = Synth.tail(nil, \verb);
 )
 
-~fx = Synth.tail(nil, \verb);

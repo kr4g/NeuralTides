@@ -49,9 +49,8 @@ function createMaterial(numClusters, layerParams, clusterParams) {
         uniforms: {
             time: { value: 0 },
             sprite: { value: sprite },
-            layerLfo: { value: layerParams },
             clusterLfo: { value: clusterParams },
-            layerRanges: { value: new THREE.Vector2(0.2, 1.0) },
+            layerSize: { value: 0.2 },
             clusterRanges: { value: Array(numClusters)
                 .fill()
                 .map(() => new THREE.Vector2(0.067, 0.8))

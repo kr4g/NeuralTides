@@ -15,6 +15,10 @@ SynthDef(\play_slice, {
 	dursecs = (stopsamp - startsamp) / BufSampleRate.ir(src);
 
 	dursecs = min(dursecs, 1);
+	// durMax = min(dursecs, 1);
+	// durMin = max(dursecs, 0.01);
+	//
+	// dursecs = \grainSize.kr(1).linlin(0.0,1.0,durMin,durMax);
 
 	trigEnv = EnvGen.kr(
 		Env(
@@ -26,7 +30,9 @@ SynthDef(\play_slice, {
 
 	sig = sig * trigEnv;
 
-	env = Env.perc(alpha * duration, (1.0 - alpha) * duration, curve: alpha.linlin(0.0,1.0,-2,1)).kr(doneAction: 2);
+	env = Env.perc(alpha * duration,
+		(1.0 - alpha) * duration,
+		curve: alpha.linlin(0.0,1.0,-2,1)).kr(doneAction: 2);
 
 	sig = sig * \amp.kr(1, 0.05) * env * -20.dbamp;
 
@@ -35,12 +41,13 @@ SynthDef(\play_slice, {
 
 SynthDef(\lfo, {
 	var sig = In.ar(\in.kr(0), 2);
-	var lfo = SinOsc.ar(freq: LFNoise1.ar(freq: Rand(0.02, 0.03))
-		.range(0.125/8, 0.25), phase: Rand(-8pi, 8pi))
+	var lfo = SinOsc.ar(freq: LFNoise1.ar(freq: Rand(0.03, 0.05))
+		.range(0.125/8, 0.5), phase: Rand(-8pi, 8pi))
 	.range(\minRange.kr(0.0, 0.1), \maxRange.kr(1, 0.1));
 	sig = sig * lfo;
 	sig = Pan2.ar(sig, LFNoise1.ar(SinOsc.ar(ExpRand(0.13, 0.19)).range(0.833, 3.167)));
-	Out.ar(\out.kr(0), sig * \maxAmp.kr(1, 0.05));
+	SendTrig.kr(Impulse.kr(20), \layerId.kr(-1), lfo);
+	Out.ar(\out.kr(0), sig);
 }).add;
 
 SynthDef(\verb, {

@@ -18,9 +18,9 @@ function resetAllHighlights() {
     hideCursor();
 }
 
-function handleLayerMessage(layerId, minRange, maxRange) {
+function handleLayerMessage(layerId, size) {
     if (layerId >= 0 && layerId < materials.length) {
-        materials[layerId].uniforms.layerRanges.value.set(minRange, maxRange);
+        materials[layerId].uniforms.layerSize.value = size;
     }
 }
 
@@ -42,7 +42,6 @@ function handleHighlightMessage(layerId, pointId, clusterId) {
     
     if (layerId >= 0 && layerId < materials.length) {
         const material = materials[layerId];
-        materials[layerId].uniforms.layerRanges.value.set(0.333, 1.0);
         material.uniforms.highlightPointId.value = pointId;
         material.uniforms.highlightLayer.value = pointId >= 0 ? layerId : -1;
         
@@ -71,7 +70,7 @@ function initWebSocket() {
         
         switch(address) {
             case '/layer':
-                handleLayerMessage(msg[1] - 1, msg[2], msg[3]);
+                handleLayerMessage(msg[1] - 1, msg[2]);
                 break;
                 
             case '/cluster':

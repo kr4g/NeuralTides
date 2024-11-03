@@ -32,6 +32,7 @@
 		~synths[layerId] = Dictionary.new;
 
 		~synths[layerId][\lfo] = Synth(\lfo, [
+			\layerId, layerId,
 			\in, ~lfoBuses[i],
 			\out, 0
 		]);
@@ -57,6 +58,7 @@
 		\amp, amp,
 		\duration, duration,
 		\alpha, alpha,
+		// \grainSize, 0,
 		\out, bus
 	]).onFree();
 

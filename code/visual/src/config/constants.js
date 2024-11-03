@@ -28,10 +28,6 @@ export const BORDER_CONFIG = {
     z: 0.01
 };
 
-// WebSocket configuration
-export const WS_URL = 'ws://localhost:7400';
-
-// Sprite configuration
 export const SPRITE_CONFIG = {
     width: 128,
     height: 128,
@@ -43,3 +39,5 @@ export const SPRITE_CONFIG = {
         ]
     }
 };
+
+export const WS_URL = 'ws://localhost:7400';

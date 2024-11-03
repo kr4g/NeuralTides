@@ -26,8 +26,8 @@ function generateClusterParams() {
     return new THREE.Vector4(
         0.08 + Math.random() * 0.13,
         generateRandomPhase(),
-        0.167,
-        0.833
+        0.083,
+        0.667
     );
 }
 
