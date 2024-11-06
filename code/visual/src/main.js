@@ -43,6 +43,7 @@ function animate() {
 
     materials.forEach(material => {
         material.uniforms.time.value = time;
+        // console.log("time", time);
         
         for (let i = 0; i < material.uniforms.clusterRanges.value.length; i++) {
             const current = material.uniforms.clusterRanges.value[i];

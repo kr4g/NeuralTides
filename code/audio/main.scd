@@ -22,6 +22,7 @@ s.newBusAllocators;
 s.reboot;
 )
 
+thisProcess.openPorts;
 
 (
 var path = PathName(thisProcess.nowExecutingPath);

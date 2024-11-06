@@ -1,10 +1,11 @@
 // src/utils/websocket.js
 import { positionCursor, hideCursor } from '../scene/cursor.js';
 import { materials } from '../config/materials.js';
-import { WS_URL, HIGHLIGHT_TIMEOUT } from '../config/constants.js';
+import { WS_RECEIVE_URL, HIGHLIGHT_TIMEOUT } from '../config/constants.js';
 import { reloadLayerVariant } from '../data/loader.js';
 
-let ws;
+let wsSend;
+let wsReceive;
 let globalHighlightTimeout = null;
 
 function resetAllHighlights() {
@@ -37,7 +38,7 @@ function handleHighlightMessage(layerId, pointId, clusterId) {
     if (globalHighlightTimeout) {
         clearTimeout(globalHighlightTimeout);
     }
-    
+
     globalHighlightTimeout = setTimeout(resetAllHighlights, HIGHLIGHT_TIMEOUT);
     
     if (layerId >= 0 && layerId < materials.length) {
@@ -49,7 +50,7 @@ function handleHighlightMessage(layerId, pointId, clusterId) {
             if (i == clusterId && pointId >= 0) {
                 material.uniforms.targetClusterRanges.value[i].set(0.9, 1.0);
             } else {
-                material.uniforms.targetClusterRanges.value[i].set(0.01, 0.2);
+                material.uniforms.targetClusterRanges.value[i].set(0.1, 0.3);
             }
         }
     } else if (pointId < 0) {
@@ -62,9 +63,11 @@ function handleHighlightMessage(layerId, pointId, clusterId) {
 }
 
 function initWebSocket() {
-    ws = new WebSocket(WS_URL);
+    wsReceive = new WebSocket(WS_RECEIVE_URL);
+    // wsSend = new WebSocket(WS_SEND_URL);
+    // wsSend = new Client('127.0.0.1', 57120);
     
-    ws.onmessage = function(event) {
+    wsReceive.onmessage = function(event) {
         const msg = JSON.parse(event.data);
         const address = msg[0];
         
@@ -82,7 +85,7 @@ function initWebSocket() {
                 break;
                 
             case '/reload':
-                reloadLayerVariant(msg[1] - 1, msg[2]);
+                // reloadLayerVariant(msg[1] - 1, msg[2]);
                 break;
                 
             case '/pos':
@@ -91,7 +94,7 @@ function initWebSocket() {
         }
     };
 
-    return ws;
+    return wsReceive;
 }
 
 export {

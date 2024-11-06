@@ -29,9 +29,9 @@ float clusterLfoFunc(vec4 params, vec2 range, float t) {
     float noiseFreq = mix(minFreq, maxFreq, freqMod);
     float v = noise(t * noiseFreq);
 
-    float randomVal = perlin(vec2(-position.y, -position.x));
-    float exp = randomVal * 1.5 + 0.5;
-    v = pow(v, exp);
+    // float randomVal = perlin(vec2(-position.y, -position.x) + pointId - vTime);
+    // float exp = randomVal * 1.5 + 0.5;
+    // v = pow(v, exp);
     
     return mix(range.x, range.y, v);
 }
@@ -41,7 +41,7 @@ void main() {
     vColor = color;
     int cid = int(clusterId);
     
-    float randVal = perlin(vec2(position.x, position.y));
+    float randVal = perlin(vec2(position.x, position.y) / (layerId + vTime));
     float exp = randVal * 1.5 + 0.5;
     float size = pow(layerSize, exp);
     vBrightness = clusterLfoFunc(clusterLfo[cid], clusterRanges[cid], time);

@@ -40,4 +40,5 @@ export const SPRITE_CONFIG = {
     }
 };
 
-export const WS_URL = 'ws://localhost:7400';
+export const WS_RECEIVE_URL = 'ws://localhost:7400';
+export const WS_SEND_URL = 'ws://localhost:57120';

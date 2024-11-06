@@ -1,8 +1,9 @@
 // src/config/materials.js
 import * as THREE from 'three';
-import { SPRITE_CONFIG } from './constants.js';
+import { SPRITE_CONFIG, DATASET_CONFIGS } from './constants.js';
 
-export const materials = [];
+// make an array of the correct size
+export const materials = [];//new Array(DATASET_CONFIGS.length).fill(null);
 
 // Create sprite texture
 const canvas = document.createElement('canvas');
@@ -44,7 +45,7 @@ async function loadShaders(numClusters) {
     };
 }
 
-function createMaterial(numClusters, layerParams, clusterParams) {
+function createMaterial(numClusters, clusterParams) {
     return new THREE.ShaderMaterial({
         uniforms: {
             time: { value: 0 },
@@ -53,11 +54,13 @@ function createMaterial(numClusters, layerParams, clusterParams) {
             layerSize: { value: 0.2 },
             clusterRanges: { value: Array(numClusters)
                 .fill()
-                .map(() => new THREE.Vector2(0.067, 0.8))
+                // .map(() => new THREE.Vector2(clusterParams[i].z, clusterParams[i].w))
+                .map(() => new THREE.Vector2(0.06, 0.8))
             },
             targetClusterRanges: { value: Array(numClusters)
                 .fill()
-                .map(() => new THREE.Vector2(0.03, 0.8))
+                // .map(() => new THREE.Vector2(clusterParams[i].z, clusterParams[i].w))
+                .map(() => new THREE.Vector2(0.06, 0.8))
             },
             highlightLayer: { value: -1 },
             highlightPointId: { value: -1 }
@@ -68,11 +71,13 @@ function createMaterial(numClusters, layerParams, clusterParams) {
     });
 }
 
-async function createShaderMaterial(numClusters, layerParams, clusterParams) {
+async function createShaderMaterial(numClusters, clusterParams) {
     const shaders = await loadShaders(numClusters);
-    const material = createMaterial(numClusters, layerParams, clusterParams);
+    const material = createMaterial(numClusters, clusterParams);
     material.vertexShader = shaders.vertexShader;
     material.fragmentShader = shaders.fragmentShader;
+    
+    // materials[layerId] = material;
     materials.push(material);
     return material;
 }

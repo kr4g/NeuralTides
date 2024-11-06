@@ -33,6 +33,10 @@
 	NetAddr("127.0.0.1", 7400).sendMsg("/layer", id, lfo);
 }, '/tr');
 
+~reset = OSCdef(\reset, { |msg|
+	msg.postln;
+}, '/reset');
+
 // ------------------------------------------------------------------------------------------------------------
 
 ~pos = OSCdef(\position, { |msg|
@@ -40,6 +44,7 @@
 	~point.setn(0, [x, y]);
 	~nLayers.do{ |i|
 		var layerId = i + 1;
+		// ~synths[layerId][\lfo].set(\minRange, 0.0, \maxRange, 1.0);
 
 		defer{
 			~data[layerId][\tree].kNearest(~point, 1, { |nearest|
@@ -48,3 +53,4 @@
 	};
 }, '/pos');
 )
+
