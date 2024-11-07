@@ -29,9 +29,10 @@ float clusterLfoFunc(vec4 params, vec2 range, float t) {
     float noiseFreq = mix(minFreq, maxFreq, freqMod);
     float v = noise(t * noiseFreq);
 
-    // float randomVal = perlin(vec2(-position.y, -position.x) + pointId - vTime);
+    // float randomVal = perlin(vec2(-position.y, -position.x) + pointId - t);
     // float exp = randomVal * 1.5 + 0.5;
-    // v = pow(v, exp);
+    float exp = (sin(angle * noiseFreq + perlin(vec2(position.x, position.y) * pointId)) * 0.5 + 0.5) * 1.5 + 0.5;
+    v = pow(v, exp);
     
     return mix(range.x, range.y, v);
 }
@@ -48,6 +49,6 @@ void main() {
     vHighlight = (layerId == highlightLayer && pointId == highlightPointId) ? 1.0 : 0.0;
 
     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-    gl_PointSize = size * (vHighlight > 0.0 ? 35.0 : 15.0) / -mvPosition.z;
+    gl_PointSize = size * (vHighlight > 0.0 ? 25.0 : 10.0) / -mvPosition.z;
     gl_Position = projectionMatrix * mvPosition;
 }

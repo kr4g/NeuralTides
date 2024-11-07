@@ -7,7 +7,7 @@ import { generateClusterParams } from '../utils/coordinates.js';
 
 export const clusterCounts = new Array(DATASET_CONFIGS.length).fill(0);
 
-async function loadDataset(index, variant) {
+async function loadDataset(index, variant, initSize) {
     const config = DATASET_CONFIGS[index];
     if (!config) {
         console.warn(`No dataset config found for index ${index}`);
@@ -62,7 +62,10 @@ async function loadDataset(index, variant) {
         
         const material = await createShaderMaterial(
             clusterData.rows,
-            clusterParams
+            clusterParams,
+            index, 
+            variant,
+            initSize
         );
 
         const pointCloud = new THREE.Points(geometry, material);
@@ -88,9 +91,9 @@ export async function reloadLayerVariant(index, variant) {
         return !(isPointCloud && matchesIndex);
     });
 
-    console.log(`Reloading layer ${index} with variant ${variant}`);
+    // console.log(`Reloading layer ${index + 1} with variant ${variant}`);
 
-    await loadDataset(index, variant);
+    await loadDataset(index, variant, 0.0);
 }
 
 export { loadDataset };

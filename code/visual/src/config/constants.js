@@ -5,7 +5,7 @@ export const VIEWPORT_SCALE = 0.9;
 
 export const HIGHLIGHT_TIMEOUT = 5000;
 export const TRANSITION_SPEED = 0.1;
-export const RESET_TIME = 100.0;
+export const RESET_TIME = 50.0;
 export const CYCLE_TIME = RESET_TIME * 2;
 
 export const DATASET_CONFIGS = [

@@ -65,7 +65,7 @@
 					src: ~data[layerId][\source],
 					indices: ~data[layerId][\indices],
 					duration: dur.linexp(0.0, 1.0, 0.25, 2.0),
-					alpha: dur.linexp(0.0, 1.0, 0.1, 0.5),
+					alpha: dur.linexp(0.001, 1.0, 0.1, 0.5),
 					amp: 0.75,
 					bus: ~lfoBuses[layerId - 1]
 				);

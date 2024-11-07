@@ -9,7 +9,7 @@ let wsReceive;
 let globalHighlightTimeout = null;
 
 function resetAllHighlights() {
-    materials.forEach(material => {
+    Object.values(materials).forEach(material => {
         material.uniforms.highlightPointId.value = -1;
         material.uniforms.highlightLayer.value = -1;
         for (let i = 0; i < material.uniforms.targetClusterRanges.value.length; i++) {
@@ -20,7 +20,7 @@ function resetAllHighlights() {
 }
 
 function handleLayerMessage(layerId, size) {
-    if (layerId >= 0 && layerId < materials.length) {
+    if (layerId >= 0 && layerId < Object.keys(materials).length) {
         materials[layerId].uniforms.layerSize.value = size;
     }
 }
@@ -85,7 +85,7 @@ function initWebSocket() {
                 break;
                 
             case '/reload':
-                // reloadLayerVariant(msg[1] - 1, msg[2]);
+                reloadLayerVariant(msg[1] - 1, msg[2]);
                 break;
                 
             case '/pos':

@@ -8,7 +8,7 @@
 	4: ['a'],
 );
 
-~thresh = 0.00001;
+~thresh = 0.00005;
 ~belowThresh = Dictionary.new;
 ~nLayers.do{ |i| ~belowThresh[i + 1] = False };
 

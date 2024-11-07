@@ -40,10 +40,17 @@ SynthDef(\play_slice, {
 }).add;
 
 SynthDef(\lfo, {
+	var lag = \lag.kr(1);
 	var sig = In.ar(\in.kr(0), 2);
-	var lfo = SinOsc.ar(freq: LFNoise1.ar(freq: Rand(0.03, 0.05))
-		.range(0.125/16, 0.25), phase: Rand(-8pi, 8pi))
-	.range(\minRange.kr(0.0, 0.1), \maxRange.kr(1, 0.1));
+	var lfo = SinOsc.ar(
+		freq: LFNoise1.ar(
+			freq: SinOsc.ar(
+				freq: Rand(0.001, 0.003),
+				phase: Rand(-8pi, 8pi)
+			).range(0.03, 0.13)  // inner Sine range
+		).range(0.125/8, 0.5),  // inner Noise range
+		phase: Rand(-8pi, 8pi)
+	).range(\minRange.kr(0.0, lag), \maxRange.kr(1, lag)); // outer LFO range
 	sig = sig * lfo;
 	sig = Pan2.ar(sig, LFNoise1.ar(SinOsc.ar(ExpRand(0.13, 0.19)).range(0.833, 3.167)));
 	SendTrig.kr(Impulse.kr(20), \layerId.kr(-1), lfo);

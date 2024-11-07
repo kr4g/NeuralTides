@@ -2,8 +2,9 @@
 import * as THREE from 'three';
 import { SPRITE_CONFIG, DATASET_CONFIGS } from './constants.js';
 
-// make an array of the correct size
-export const materials = [];//new Array(DATASET_CONFIGS.length).fill(null);
+
+// export const materials = Array(DATASET_CONFIGS.length).fill(null);
+export const materials = {};
 
 // Create sprite texture
 const canvas = document.createElement('canvas');
@@ -45,21 +46,19 @@ async function loadShaders(numClusters) {
     };
 }
 
-function createMaterial(numClusters, clusterParams) {
+function createMaterial(numClusters, clusterParams, initSize) {
     return new THREE.ShaderMaterial({
         uniforms: {
             time: { value: 0 },
             sprite: { value: sprite },
             clusterLfo: { value: clusterParams },
-            layerSize: { value: 0.2 },
+            layerSize: { value: initSize },
             clusterRanges: { value: Array(numClusters)
                 .fill()
-                // .map(() => new THREE.Vector2(clusterParams[i].z, clusterParams[i].w))
                 .map(() => new THREE.Vector2(0.06, 0.8))
             },
             targetClusterRanges: { value: Array(numClusters)
                 .fill()
-                // .map(() => new THREE.Vector2(clusterParams[i].z, clusterParams[i].w))
                 .map(() => new THREE.Vector2(0.06, 0.8))
             },
             highlightLayer: { value: -1 },
@@ -71,14 +70,13 @@ function createMaterial(numClusters, clusterParams) {
     });
 }
 
-async function createShaderMaterial(numClusters, clusterParams) {
+async function createShaderMaterial(numClusters, clusterParams, layerId, variant, initSize) {
     const shaders = await loadShaders(numClusters);
-    const material = createMaterial(numClusters, clusterParams);
+    const material = createMaterial(numClusters, clusterParams, initSize);
     material.vertexShader = shaders.vertexShader;
     material.fragmentShader = shaders.fragmentShader;
-    
-    // materials[layerId] = material;
-    materials.push(material);
+  
+    materials[layerId] = material;
     return material;
 }
 
