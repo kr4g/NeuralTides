@@ -8,8 +8,8 @@ ServerOptions.devices.do{ |item|
 Server.killAll;
 s = Server.local;
 s.options.outDevice_(
-	"MacBook Pro Speakers"
-	// "External Headphones"
+	// "MacBook Pro Speakers"
+	"External Headphones"
 	// "Ryan’s AirPods P"
 	// "Scarlett 4i4 USB"
 	// "Klipsch One II"
@@ -36,7 +36,8 @@ Synth(\default);
 // ------------------------------------------------------------------------------------------
 
 (
-~folder = "/Users/ryanmillett/Downloads/Final_Normalized/" ++ ~nSrc;
+// ~folder = "/Users/ryanmillett/Downloads/Final_Normalized/" ++ ~nSrc;
+~folder = "/Users/ryanmillett/Downloads/Final_Normalized 2/categories/civilization2.wav";
 ~loader = FluidLoadFolder(~folder).play(s, {
 	"done loading folder".postln;
 });
@@ -66,20 +67,21 @@ if(~loader.buffer.numChannels > 1){
 
 // -------------------------------------------------------------------------------
 (
-(PathName.new(thisProcess.nowExecutingPath).parentPath ++ "synthdefs.scd").load;
-(PathName.new(thisProcess.nowExecutingPath).parentPath ++ "functions.scd").load;
-(PathName.new(thisProcess.nowExecutingPath).parentPath ++ "oscdefs.scd").load;
+~codePath = PathName.new(thisProcess.nowExecutingPath).parentPath;
+(~codePath ++ "processes/globals.scd").load;
+(~codePath ++ "processes/functions.scd").load;
+(~codePath ++ "defs/synthdefs.scd").load;
 )
 // -------------------------------------------------------------------------------
 
 // ~src = Buffer.read(s, "/Users/ryanmillett/GITEX_V2/GITEX_24/Buffers/Audio/src%\%.wav".format(~nSrc, ~vrs));
-~src = Buffer.read(s, "/Users/ryanmillett/GITEX_V2/GITEX_24/Buffers/Audio/src%a.wav".format(~nSrc));
-~indices = Buffer.read(s, "/Users/ryanmillett/nt_babylon/data/idc_%\%.wav".format(~nSrc, "a"));
+~src = Buffer.read(s, "/Users/ryanmillett/Downloads/drive-download-20241108T021508Z-001/water_2.wav");
+// ~indices = Buffer.read(s, "/Users/ryanmillett/nt_babylon/data/idc_%\%.wav".format(~nSrc, "a"));
 
 // slice the buffer in non real-time
 (
 ~indices = Buffer(s);
-FluidBufOnsetSlice.processBlocking(s,~src,metric:9,threshold:0.05,windowSize:1024,hopSize:-1,minSliceLength:4,filterSize:51,indices:~indices,action:{
+FluidBufOnsetSlice.processBlocking(s,~src,metric:7,threshold:0.1,windowSize:1024,hopSize:-1,fftSize:2048,minSliceLength:8,filterSize:51,indices:~indices,action:{
 	"found % slice points".format(~indices.numFrames).postln;
 	"average duration per slice: %".format(~src.duration / (~indices.numFrames+1)).postln;
 });
@@ -118,11 +120,11 @@ FluidBufOnsetSlice.processBlocking(s,~src,metric:9,threshold:0.05,windowSize:102
 (
 ~umapped = FluidDataSet(s);
 ~normed = FluidDataSet(s);
-FluidUMAP(s,numNeighbours:5,minDist:0.5, iterations: 500, learnRate: 0.25).fitTransform(~analyses,~umapped,action:{
+FluidUMAP(s,numNeighbours:9,minDist:0.5, iterations: 250, learnRate: 0.1).fitTransform(~analyses,~umapped,action:{
 	"umap done".postln;
 	FluidNormalize(s).fitTransform(~umapped,~normed,{
 		"transform done.".postln;
-		~tree = FluidKDTree(s, numNeighbours: 3, radius: 0.05).fit(~normed, action: {"fit done".postln});
+		~tree = FluidKDTree(s, numNeighbours: 1, radius: 0.0).fit(~normed, action: {"fit done".postln});
 	});
 });
 )
@@ -139,21 +141,19 @@ FluidUMAP(s,numNeighbours:5,minDist:0.5, iterations: 500, learnRate: 0.25).fitTr
 			arg view, x, y;
 			// [x,y].postln;
 			point.setn(0,[x,y]);
-			~tree.kNearest(point,6,{
+			~tree.kNearest(point,1,{
 				arg nearest;
 				if(nearest != previous){
 					nearest.postln;
 					view.highlight_(nearest);
-					if (nearest.size > 0) {
-						~play_slice.(
-							id: 1,
-							index: nearest[0].asInteger,
-							src: ~src,
-							indices: ~indices,
-							duration: 0.5,
-						);
-						~ls.getLabel(nearest[0], {arg clust; clust.postln;});
-					};
+					~play_slice.(
+						id: 1,
+						index: nearest.asInteger,
+						src: ~src,
+						indices: ~indices,
+						duration: 1,
+					);
+					// ~ls.getLabel(nearest, {arg clust; clust.postln;});
 					previous = nearest;
 				}
 			});
@@ -162,13 +162,11 @@ FluidUMAP(s,numNeighbours:5,minDist:0.5, iterations: 500, learnRate: 0.25).fitTr
 });
 )
 
+
 (
 ~kmeans = FluidKMeans(s);
 ~ls = FluidLabelSet(s);
-)
-
-(
-~kmeans.numClusters_(7).fitPredict(~normed, ~ls,{
+~kmeans.numClusters_(12).fitPredict(~normed, ~ls,{
 	~ls.dump({
 		arg dict;
 		~fp.categories_(dict);
@@ -180,12 +178,13 @@ FluidUMAP(s,numNeighbours:5,minDist:0.5, iterations: 500, learnRate: 0.25).fitTr
 // -------------------------------------------------------------------------------------------------------
 
 (
-~indices.write("/Users/ryanmillett/nt_babylon/data/idc_%\%.wav".format(~nSrc, ~vrs), "wav", "float");
+~src.write("/Users/ryanmillett/NeurIPS/data/buffers/audio/%/src_%\%.wav".format(~nSrc, ~nSrc, ~vrs));
+~indices.write("/Users/ryanmillett/NeurIPS/data/buffers/indices/%/idc_%\%.wav".format(~nSrc, ~nSrc, ~vrs), "wav", "float");
 )
 
 (
-~normed.write("/Users/ryanmillett/nt_babylon/data/umap_norm_%\%.json".format(~nSrc, ~vrs));
-~tree.write("/Users/ryanmillett/nt_babylon/data/kd_tree_%\%.json".format(~nSrc, ~vrs));
-~ls.write("/Users/ryanmillett/nt_babylon/data/labels_%\%.json".format(~nSrc, ~vrs));
-~kmeans.write("/Users/ryanmillett/nt_babylon/data/km_clusters_%\%.json".format(~nSrc, ~vrs));
+~normed.write("/Users/ryanmillett/NeurIPS/data/json/%/umap_norm_%\%.json".format(~nSrc, ~nSrc, ~vrs));
+~tree.write("/Users/ryanmillett/NeurIPS/data/json/%/kd_tree_%\%.json".format(~nSrc, ~nSrc, ~vrs));
+~ls.write("/Users/ryanmillett/NeurIPS/data/json/%/labels_%\%.json".format(~nSrc, ~nSrc, ~vrs));
+~kmeans.write("/Users/ryanmillett/NeurIPS/data/json/%/km_clusters_%\%.json".format(~nSrc, ~nSrc, ~vrs));
 )

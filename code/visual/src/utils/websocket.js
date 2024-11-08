@@ -41,7 +41,7 @@ function handleHighlightMessage(layerId, pointId, clusterId) {
 
     globalHighlightTimeout = setTimeout(resetAllHighlights, HIGHLIGHT_TIMEOUT);
     
-    if (layerId >= 0 && layerId < materials.length) {
+    if (layerId >= 0 && layerId < Object.keys(materials).length) {
         const material = materials[layerId];
         material.uniforms.highlightPointId.value = pointId;
         material.uniforms.highlightLayer.value = pointId >= 0 ? layerId : -1;
@@ -50,7 +50,7 @@ function handleHighlightMessage(layerId, pointId, clusterId) {
             if (i == clusterId && pointId >= 0) {
                 material.uniforms.targetClusterRanges.value[i].set(0.9, 1.0);
             } else {
-                material.uniforms.targetClusterRanges.value[i].set(0.1, 0.3);
+                material.uniforms.targetClusterRanges.value[i].set(0.05, 0.1);
             }
         }
     } else if (pointId < 0) {
@@ -81,10 +81,12 @@ function initWebSocket() {
                 break;
                 
             case '/highlight':
+                // console.log(msg);
                 handleHighlightMessage(msg[1] - 1, msg[2], msg[3]);
                 break;
                 
             case '/reload':
+                handleClusterMessage(msg[1] - 1, msg[2], 0.0);
                 reloadLayerVariant(msg[1] - 1, msg[2]);
                 break;
                 

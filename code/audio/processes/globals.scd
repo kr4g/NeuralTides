@@ -1,14 +1,21 @@
 (
 ~nLayers = 4;
 
-~variants = (
-	1: ['a'],
+/*~variants = (
+	1: ['a', 'b', 'c'],
 	2: ['a'],
 	3: ['a'],
 	4: ['a'],
+);*/
+
+~variant = (
+	1: \a,
+	2: \a,
+	3: \a,
+	4: \a,
 );
 
-~thresh = 0.00005;
+~thresh = 0.001;
 ~belowThresh = Dictionary.new;
 ~nLayers.do{ |i| ~belowThresh[i + 1] = False };
 

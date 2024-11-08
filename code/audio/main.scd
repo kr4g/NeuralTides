@@ -4,9 +4,9 @@ ServerOptions.devices.do{ |item| item.postln; };
 Server.killAll;
 s = Server.local;
 s.options.outDevice_(
-	"MacBook Pro Speakers"
+	// "MacBook Pro Speakers"
 	// "Ryan’s AirPods P"
-	// "External Headphones"
+	"External Headphones"
 	// "Ryan’s AirPods P"
 	// "Scarlett 4i4 USB"
 	// "Klipsch One II"
@@ -44,4 +44,11 @@ var path = PathName(thisProcess.nowExecutingPath);
 ~setupBuses.(~nLayers);
 ~fx = Synth.tail(nil, \verb);
 )
-
+//
+// (
+// 3.do{ |i|
+// 	var layerId = i + 2;
+// 	~synths[layerId][\lfo].set(\lag, 0.1, \minRange, 0, \maxRange, 0);
+//
+// };
+// )

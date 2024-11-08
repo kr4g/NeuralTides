@@ -28,10 +28,12 @@
 	var id = msg[2], lfo = msg[3];
 	// msg.postln;
 	if (lfo < ~thresh && ~belowThresh[id] == False) {
-		var variant = ~variants[id].choose;
+		~variant[id] = ~variants[id].choose.asSymbol;
 		~belowThresh[id] = True;
-		msg.postln;
-		NetAddr("127.0.0.1", 7400).sendMsg("/reload", id, variant);
+
+		// if (id == 1) { ~variant[id].postln; };
+
+		NetAddr("127.0.0.1", 7400).sendMsg("/reload", id, ~variant[id]);
 	};
 
 	if (lfo >= ~thresh && ~belowThresh[id] == True) { ~belowThresh[id] = False; };
@@ -50,13 +52,13 @@
 	~point.setn(0, [x, y]);
 	~nLayers.do{ |i|
 		var layerId = i + 1;
+		var variant = ~variant[layerId];
 		// ~synths[layerId][\lfo].set(\minRange, 0.0, \maxRange, 1.0);
 
 		defer{
-			~data[layerId][\tree].kNearest(~point, 1, { |nearest|
+			~data[layerId][variant][\tree].kNearest(~point, 1, { |nearest|
 				~processNearestPoint.(layerId, nearest, dur);
 		});}
 	};
 }, '/pos');
 )
-

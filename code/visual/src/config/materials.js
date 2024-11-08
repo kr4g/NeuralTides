@@ -1,6 +1,6 @@
 // src/config/materials.js
 import * as THREE from 'three';
-import { SPRITE_CONFIG, DATASET_CONFIGS } from './constants.js';
+import { SPRITE_CONFIG } from './constants.js';
 
 
 // export const materials = Array(DATASET_CONFIGS.length).fill(null);

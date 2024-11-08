@@ -19,7 +19,8 @@ const totalDatasets = DATASET_CONFIGS.length;
 
 // Start loading datasets
 for (let i = 0; i < totalDatasets; i++) {
-    let variant = DATASET_CONFIGS[i].variants[Math.floor(Math.random() * DATASET_CONFIGS[i].variants.length)];
+    // let variant = DATASET_CONFIGS[i].variants[Math.floor(Math.random() * DATASET_CONFIGS[i].variants.length)];
+    let variant = DATASET_CONFIGS[i].variants[0];
     loadDataset(i, variant, 0.5).then(() => {
         datasetsLoaded++;
         if (datasetsLoaded === totalDatasets) {
@@ -37,7 +38,7 @@ const startTime = Math.random() * CYCLE_TIME;
 
 function animate() {
     requestAnimationFrame(animate);
-    const trueTime = performance.now() * 0.0005 + startTime;
+    const trueTime = performance.now() * 0.001 + startTime;
     const normalizedTime = trueTime % CYCLE_TIME;
     const time = normalizedTime <= RESET_TIME ? normalizedTime : CYCLE_TIME - normalizedTime;
 

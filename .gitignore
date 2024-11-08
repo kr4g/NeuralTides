@@ -22,6 +22,8 @@ code/server/dist/
 # Max patches autosave
 patchers/*.maxpat.bak
 
+*.zip
+
 *.log
 .env
 .env.local

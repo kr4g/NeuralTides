@@ -79,7 +79,6 @@ async function loadDataset(index, variant, initSize) {
 }
 
 export async function reloadLayerVariant(index, variant) {
-    // Remove existing point cloud for this layer
     scene.children = scene.children.filter(child => {
         const isPointCloud = child instanceof THREE.Points;
         const hasLayerId = isPointCloud && child.geometry.attributes.layerId;

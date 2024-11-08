@@ -1,15 +1,32 @@
 (
 ~initializeData = { |numLayers|
+	~variants = (
+		1: ['a', 'b', 'c'],
+		2: ['a'],
+		3: ['a'],
+		4: ['a'],
+	);
+
+	~variant = (
+		1: \a,
+		2: \a,
+		3: \a,
+		4: \a,
+	);
+
 	~data = Dictionary.new;
 	numLayers.do { |i|
 		var layerId = i + 1;
-		~data[layerId] = Dictionary.newFrom([
-			\source, Buffer.read(s, ~dataPath ++ "buffers/audio/%/src%a.wav".format(layerId, layerId)),
-			\indices, Buffer.read(s, ~dataPath ++ "buffers/indices/%/idc_%a.wav".format(layerId, layerId)),
-			\umap, FluidDataSet.new(s).read(~dataPath ++ "json/%/umap_norm_%a.json".format(layerId, layerId)),
-			\labels, FluidLabelSet.new(s).read(~dataPath ++ "json/%/labels_%a.json".format(layerId, layerId)),
-			\tree, FluidKDTree.new(s, 1, 0.03).read(~dataPath ++ "json/%/kd_tree_%a.json".format(layerId, layerId)),
-		]);
+		~data[layerId] = Dictionary.new;
+		~variants[layerId].do{ |item, j|
+			~data[layerId][item.asSymbol] = Dictionary.newFrom([
+				\source, Buffer.read(s, ~dataPath ++ "buffers/audio/%/src_%\%.wav".format(layerId, layerId, item)),
+				\indices, Buffer.read(s, ~dataPath ++ "buffers/indices/%/idc_%\%.wav".format(layerId, layerId, item)),
+				\umap, FluidDataSet.new(s).read(~dataPath ++ "json/%/umap_norm_%\%.json".format(layerId, layerId, item)),
+				\labels, FluidLabelSet.new(s).read(~dataPath ++ "json/%/labels_%\%.json".format(layerId, layerId, item)),
+				\tree, FluidKDTree.new(s, 1, 0.03).read(~dataPath ++ "json/%/kd_tree_%\%.json".format(layerId, layerId, item)),
+			]);
+		};
 	};
 };
 
@@ -55,22 +72,24 @@
 };
 
 ~processNearestPoint = { |layerId, nearest, dur|
-	~data[layerId][\labels].getLabel(nearest.asInteger, { |clust = -1, pt = -1|
+	var variant = ~variant[layerId];
+	~data[layerId][variant][\labels].getLabel(nearest.asInteger, { |clust = -1, pt = -1|
 		if (nearest != ~previous[layerId]) {
 			if (nearest.class != Array) {
 				pt = nearest.asInteger;
 				~play_slice.(
 					id: layerId,
 					index: pt,
-					src: ~data[layerId][\source],
-					indices: ~data[layerId][\indices],
+					src: ~data[layerId][variant][\source],
+					indices: ~data[layerId][variant][\indices],
 					duration: dur.linexp(0.0, 1.0, 0.25, 2.0),
 					alpha: dur.linexp(0.001, 1.0, 0.1, 0.5),
 					amp: 0.75,
 					bus: ~lfoBuses[layerId - 1]
 				);
 			};
-			NetAddr("127.0.0.1", 7400).sendMsg("/highlight", layerId, pt, clust);
+			// [layerId, variant, pt, clust].postln;
+			NetAddr("127.0.0.1", 7400).sendMsg("/highlight", layerId, pt, clust.asInteger);
 			~previous[layerId] = nearest;
 		}
 	});

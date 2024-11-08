@@ -23,7 +23,7 @@ SynthDef(\play_slice, {
 	trigEnv = EnvGen.kr(
 		Env(
 			[0, 1, 1, 0],
-			[dursecs * 0.125, dursecs * 0.75, dursecs * 0.125], \lin
+			[dursecs * 0.25, dursecs * 0.5, dursecs * 0.25], \lin
 		),
 		gate: Impulse.kr(1 / dursecs), doneAction: 0
 	);
@@ -48,7 +48,7 @@ SynthDef(\lfo, {
 				freq: Rand(0.001, 0.003),
 				phase: Rand(-8pi, 8pi)
 			).range(0.03, 0.13)  // inner Sine range
-		).range(0.125/8, 0.5),  // inner Noise range
+		).range(0.125/8, 0.25),  // inner Noise range
 		phase: Rand(-8pi, 8pi)
 	).range(\minRange.kr(0.0, lag), \maxRange.kr(1, lag)); // outer LFO range
 	sig = sig * lfo;
