@@ -1,8 +1,8 @@
 (
 ~initializeData = { |numLayers|
 	~variants = (
-		1: ['a', 'b', 'c'],
-		2: ['a'],
+		1: ['a', 'b', 'c', 'd'],
+		2: ['a', 'b', 'c'],
 		3: ['a'],
 		4: ['a'],
 	);
@@ -31,6 +31,7 @@
 };
 
 ~setupBuses = { |numLayers|
+	// var distribution = numLayers.collect{ rrand(0.0,1) }.normalizeSum;
 	~lfoBuses = Array.fill(numLayers, { Bus.audio(s, 2) });
 	numLayers.do { |i|
 		var layerId = i + 1;
@@ -39,12 +40,30 @@
 		~synths[layerId][\lfo] = Synth(\lfo, [
 			\layerId, layerId,
 			\minRange, 0.0,
-			\maxRange, 0.8,
+			\maxRange, 0.75,
+			// \maxRange, distribution[i],
 			\in, ~lfoBuses[i],
 			\out, 0
 		]);
 	};
 };
+
+~layerProportions = Routine({
+	loop{
+		var distribution = ((1..~nLayers)/~nLayers).scramble;
+		distribution.postln;
+		~nLayers.do{ |i|
+			var curve = distribution[i].linlin(0.25, 1.0, 4.0, -4);
+			var maxRange = distribution[i].linlin(0.25, 1.0, 0.5, 0.8);
+
+			var minClust = distribution[i].linlin(0.25, 1.0, 0.0, 0.2);
+			var maxClust = distribution[i].linlin(0.25, 1.0, 0.5, 0.8);
+			~synths[i + 1][\lfo].set(\lag, 3, \maxRange, maxRange, \curve, curve);
+			NetAddr("127.0.0.1", 7400).sendMsg("/clusters", i + 1, minClust, maxClust);
+		};
+		rrand(60.0, 90).wait;
+	};
+});
 
 ~play_slice = {
 	arg id = -1, src = nil, indices = nil, index = -1, duration = 1, amp = 1, bus = 0, alpha = 0;
@@ -87,7 +106,8 @@
 					amp: 0.75,
 					bus: ~lfoBuses[layerId - 1]
 				);
-			};
+				~synths[layerId][\lfo].set(\lag, 1, /*\minRange, 0.5, \maxRange, 1,*/ \curve, -2);
+			} { ~synths[layerId][\lfo].set(\lag, 1, /*\minRange, 0.0, \maxRange, 0.5,*/ \curve, 2); };
 			// [layerId, variant, pt, clust].postln;
 			NetAddr("127.0.0.1", 7400).sendMsg("/highlight", layerId, pt, clust.asInteger);
 			~previous[layerId] = nearest;

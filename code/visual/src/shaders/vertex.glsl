@@ -17,7 +17,10 @@ varying vec3 vColor;
 varying float vBrightness;
 varying float vHighlight;
 varying float vTime;
-
+varying vec2 vPosition;
+varying float vPointId;
+varying float vClusterId;
+varying float vLayerId;
 float clusterLfoFunc(vec4 params, vec2 range, float t) {
     float baseFreq = params.x;
     float phase = params.y;
@@ -39,6 +42,10 @@ float clusterLfoFunc(vec4 params, vec2 range, float t) {
 void main() {
     vTime = time;
     vColor = color;
+    vPosition = position.xy;
+    vPointId = pointId;
+    vClusterId = clusterId;
+    vLayerId = layerId;
     int cid = int(clusterId);
     
     float randVal = perlin(vec2(position.x, position.y) / (layerId + vTime));
@@ -48,6 +55,6 @@ void main() {
     vHighlight = (layerId == highlightLayer && pointId == highlightPointId) ? 1.0 : 0.0;
 
     vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-    gl_PointSize = size * (vHighlight > 0.0 ? 35.0 : 15.0) / -mvPosition.z;
+    gl_PointSize = size * (vHighlight > 0.0 ? 35.0 : 10.0) / -mvPosition.z;
     gl_Position = projectionMatrix * mvPosition;
 }

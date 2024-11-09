@@ -13,20 +13,11 @@ function generateRandomPhase() {
     return Math.random() * Math.PI * 2;
 }
 
-// function generateLayerParams() {
-//     return new THREE.Vector4(
-//         0.02 + Math.random() * 0.005, // inner LFO freq
-//         generateRandomPhase(),
-//         0.125/8,    // outer LFO min freq
-//         0.25        // outer LFO max freq
-//     );
-// }
-
 function generateClusterParams() {
     return new THREE.Vector4(
-        0.08 + Math.random() * 0.13,
+        0.02 + Math.random() * 0.08,
         generateRandomPhase(),
-        0.067,
+        0.033,
         0.667
     );
 }

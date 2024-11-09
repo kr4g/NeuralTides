@@ -6,7 +6,7 @@
 		var layerId = i + 1;
 		var n = (layerId * 2) - 1;
 		// "% % %".format(layerId, n, n + 1).postln;
-		~synths[layerId][\lfo].set(\lag, 0.1, \minRange, msg[n], \maxRange, msg[n + 1]);
+		~synths[layerId][\lfo].set(\lag, 1, \minRange, msg[n], \maxRange, msg[n + 1]);
 	};
 }, '/layers');
 
@@ -14,7 +14,7 @@
 	arg msg;
 	var id = msg[1], minAmp = msg[2], maxAmp = msg[3];
 	if(id >= 1 and: id <= 4) {
-		~synths[id][\lfo].set(\minAmp, minAmp, \maxAmp, maxAmp);
+		~synths[id][\lfo].set(\lag, 0.5, \minRange, minAmp, \maxRange, maxAmp);
 	};
 }, '/amp');
 
@@ -29,7 +29,7 @@
 	// msg.postln;
 	if (lfo < ~thresh && ~belowThresh[id] == False) {
 		~variant[id] = ~variants[id].choose.asSymbol;
-		~belowThresh[id] = True;
+		~belowThresh[id] = true;
 
 		// if (id == 1) { ~variant[id].postln; };
 
@@ -49,12 +49,11 @@
 
 ~pos = OSCdef(\position, { |msg|
 	var x = msg[1], y = msg[2], dur = msg[3];
+	// msg.postln;
 	~point.setn(0, [x, y]);
 	~nLayers.do{ |i|
 		var layerId = i + 1;
 		var variant = ~variant[layerId];
-		// ~synths[layerId][\lfo].set(\minRange, 0.0, \maxRange, 1.0);
-
 		defer{
 			~data[layerId][variant][\tree].kNearest(~point, 1, { |nearest|
 				~processNearestPoint.(layerId, nearest, dur);

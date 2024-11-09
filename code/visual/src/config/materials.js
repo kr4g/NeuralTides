@@ -40,9 +40,12 @@ async function loadShaders(numClusters) {
         .replace(/NUM_CLUSTERS/g, numClusters.toString())
         .replace('#include common.glsl', commonGLSL);
 
+    const processedFragmentShader = fragmentGLSL
+        .replace('#include common.glsl', commonGLSL);
+
     return {
         vertexShader: processedVertexShader,
-        fragmentShader: fragmentGLSL
+        fragmentShader: processedFragmentShader
     };
 }
 

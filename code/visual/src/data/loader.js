@@ -90,7 +90,7 @@ export async function reloadLayerVariant(index, variant) {
         return !(isPointCloud && matchesIndex);
     });
 
-    // console.log(`Reloading layer ${index + 1} with variant ${variant}`);
+    console.log(`Reloading layer ${index + 1} with variant ${variant}`);
 
     await loadDataset(index, variant, 0.0);
 }

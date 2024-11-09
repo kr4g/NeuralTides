@@ -28,42 +28,41 @@ s.reboot;
 Synth(\default);
 
 (
-~nSrc = 1;
-~vrs = "b";
+~nSrc = 2;
+~vrs = "d";
 )
 
 // ------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------
-
-(
+//
+// (
 // ~folder = "/Users/ryanmillett/Downloads/Final_Normalized/" ++ ~nSrc;
-~folder = "/Users/ryanmillett/Downloads/Final_Normalized 2/categories/civilization2.wav";
-~loader = FluidLoadFolder(~folder).play(s, {
-	"done loading folder".postln;
-});
-)
-
-// sum to mono (if not mono)
-(
-if(~loader.buffer.numChannels > 1){
-	~src = Buffer(s);
-	~loader.buffer.numChannels.do{
-		arg chan_i;
-		FluidBufCompose.processBlocking(s,
-			~loader.buffer,
-			startChan:chan_i,
-			numChans:1,
-			gain:~loader.buffer.numChannels.reciprocal,
-			destination:~src,
-			destGain:1,
-			action:{"copied channel: %".format(chan_i).postln}
-		);
-	};
-}{
-	"loader buffer is already mono".postln;
-	~src = ~loader.buffer;
-};
-)
+// ~loader = FluidLoadFolder(~folder).play(s, {
+// 	"done loading folder".postln;
+// });
+// )
+//
+// // sum to mono (if not mono)
+// (
+// if(~loader.buffer.numChannels > 1){
+// 	~src = Buffer(s);
+// 	~loader.buffer.numChannels.do{
+// 		arg chan_i;
+// 		FluidBufCompose.processBlocking(s,
+// 			~loader.buffer,
+// 			startChan:chan_i,
+// 			numChans:1,
+// 			gain:~loader.buffer.numChannels.reciprocal,
+// 			destination:~src,
+// 			destGain:1,
+// 			action:{"copied channel: %".format(chan_i).postln}
+// 		);
+// 	};
+// }{
+// 	"loader buffer is already mono".postln;
+// 	~src = ~loader.buffer;
+// };
+// )
 
 // -------------------------------------------------------------------------------
 (
@@ -75,13 +74,13 @@ if(~loader.buffer.numChannels > 1){
 // -------------------------------------------------------------------------------
 
 // ~src = Buffer.read(s, "/Users/ryanmillett/GITEX_V2/GITEX_24/Buffers/Audio/src%\%.wav".format(~nSrc, ~vrs));
-~src = Buffer.read(s, "/Users/ryanmillett/Downloads/drive-download-20241108T021508Z-001/water_2.wav");
+~src = Buffer.read(s, "/Users/ryanmillett/Downloads/drive-download-20241108T021508Z-001/land_3.wav");
 // ~indices = Buffer.read(s, "/Users/ryanmillett/nt_babylon/data/idc_%\%.wav".format(~nSrc, "a"));
 
 // slice the buffer in non real-time
 (
 ~indices = Buffer(s);
-FluidBufOnsetSlice.processBlocking(s,~src,metric:7,threshold:0.1,windowSize:1024,hopSize:-1,fftSize:2048,minSliceLength:8,filterSize:51,indices:~indices,action:{
+FluidBufOnsetSlice.processBlocking(s,~src,metric:7,threshold:0.1,windowSize:1024,hopSize:-1,fftSize:2048,minSliceLength:8,filterSize:91,indices:~indices,action:{
 	"found % slice points".format(~indices.numFrames).postln;
 	"average duration per slice: %".format(~src.duration / (~indices.numFrames+1)).postln;
 });
@@ -120,7 +119,7 @@ FluidBufOnsetSlice.processBlocking(s,~src,metric:7,threshold:0.1,windowSize:1024
 (
 ~umapped = FluidDataSet(s);
 ~normed = FluidDataSet(s);
-FluidUMAP(s,numNeighbours:9,minDist:0.5, iterations: 250, learnRate: 0.1).fitTransform(~analyses,~umapped,action:{
+FluidUMAP(s,numNeighbours:5,minDist:0.35, iterations: 250, learnRate: 0.1).fitTransform(~analyses,~umapped,action:{
 	"umap done".postln;
 	FluidNormalize(s).fitTransform(~umapped,~normed,{
 		"transform done.".postln;
@@ -180,9 +179,7 @@ FluidUMAP(s,numNeighbours:9,minDist:0.5, iterations: 250, learnRate: 0.1).fitTra
 (
 ~src.write("/Users/ryanmillett/NeurIPS/data/buffers/audio/%/src_%\%.wav".format(~nSrc, ~nSrc, ~vrs));
 ~indices.write("/Users/ryanmillett/NeurIPS/data/buffers/indices/%/idc_%\%.wav".format(~nSrc, ~nSrc, ~vrs), "wav", "float");
-)
 
-(
 ~normed.write("/Users/ryanmillett/NeurIPS/data/json/%/umap_norm_%\%.json".format(~nSrc, ~nSrc, ~vrs));
 ~tree.write("/Users/ryanmillett/NeurIPS/data/json/%/kd_tree_%\%.json".format(~nSrc, ~nSrc, ~vrs));
 ~ls.write("/Users/ryanmillett/NeurIPS/data/json/%/labels_%\%.json".format(~nSrc, ~nSrc, ~vrs));

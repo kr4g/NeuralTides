@@ -34,6 +34,15 @@ function handleClusterMessage(layerId, clusterId, minRange, maxRange) {
     }
 }
 
+function handleClustersMessage(layerId, minRange, maxRange) {
+    if (layerId >= 0 && layerId < Object.keys(materials).length) {
+        const material = materials[layerId];
+        for (let i = 0; i < material.uniforms.clusterRanges.value.length; i++) {
+            material.uniforms.targetClusterRanges.value[i].set(minRange, maxRange);
+        }
+    }
+}
+
 function handleHighlightMessage(layerId, pointId, clusterId) {
     if (globalHighlightTimeout) {
         clearTimeout(globalHighlightTimeout);
@@ -50,7 +59,7 @@ function handleHighlightMessage(layerId, pointId, clusterId) {
             if (i == clusterId && pointId >= 0) {
                 material.uniforms.targetClusterRanges.value[i].set(0.9, 1.0);
             } else {
-                material.uniforms.targetClusterRanges.value[i].set(0.05, 0.1);
+                material.uniforms.targetClusterRanges.value[i].set(0.0, 0.2);
             }
         }
     } else if (pointId < 0) {
@@ -80,8 +89,11 @@ function initWebSocket() {
                 handleClusterMessage(msg[1] - 1, msg[2], msg[3], msg[4]);
                 break;
                 
+            case '/clusters':
+                handleClustersMessage(msg[1] - 1, msg[2], msg[3]);
+                break;
+                
             case '/highlight':
-                // console.log(msg);
                 handleHighlightMessage(msg[1] - 1, msg[2], msg[3]);
                 break;
                 
