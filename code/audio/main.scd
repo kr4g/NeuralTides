@@ -2,6 +2,7 @@ ServerOptions.devices.do{ |item| item.postln; };
 
 (
 Server.killAll;
+Buffer.freeAll;
 s = Server.local;
 s.options.outDevice_(
 	"MacBook Pro Speakers"
@@ -76,6 +77,13 @@ Routine({
 }).play;
 )
 
-s.record("/Users/ryanmillett/Downloads/neural_tides.wav");
+(
+4.do{ |id|
+	~synths[id + 1][\lfo].set(\lag, 5, \minRange, 0.5, \maxRange, 1, \curve, -2);
+}
+)
+
+
+// s.record("/Users/ryanmillett/Downloads/neural_tides.wav");
 
 // ~layerProportions.play;
