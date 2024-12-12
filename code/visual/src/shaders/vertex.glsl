@@ -21,6 +21,7 @@ varying vec2 vPosition;
 varying float vPointId;
 varying float vClusterId;
 varying float vLayerId;
+
 float clusterLfoFunc(vec4 params, vec2 range, float t) {
     float baseFreq = params.x;
     float phase = params.y;

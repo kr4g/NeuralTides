@@ -107,7 +107,9 @@
 					bus: ~lfoBuses[layerId - 1]
 				);
 				~synths[layerId][\lfo].set(\lag, 1, /*\minRange, 0.5, \maxRange, 1,*/ \curve, -2);
-			} { ~synths[layerId][\lfo].set(\lag, 1, /*\minRange, 0.0, \maxRange, 0.5,*/ \curve, 2); };
+			} {
+				~synths[layerId][\lfo].set(\lag, 1, /*\minRange, 0.0, \maxRange, 0.5,*/ \curve, 2);
+			};
 			// [layerId, variant, pt, clust].postln;
 			NetAddr("127.0.0.1", 7400).sendMsg("/highlight", layerId, pt, clust.asInteger);
 			~previous[layerId] = nearest;

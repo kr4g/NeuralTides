@@ -10,6 +10,18 @@
 	};
 }, '/layers');
 
+~pitch = OSCdef(\pitch, {
+	arg msg;
+	var id = msg[1], val = msg[2];
+	~synths[id + 1][\lfo].set(\amt, val);
+}, '/pitch');
+
+~time = OSCdef(\time, {
+	arg msg;
+	var id = msg[1], val = msg[2];
+	~synths[id + 1][\lfo].set(\timeDisp, val.linlin(0, 1, 0, 0.2));
+}, '/time');
+
 ~ampOSC = OSCdef(\receive_amp, {
 	arg msg;
 	var id = msg[1], minAmp = msg[2], maxAmp = msg[3];
@@ -26,13 +38,10 @@
 
 ~tr = OSCdef(\handleTrig, { |msg|
 	var id = msg[2], lfo = msg[3];
-	// msg.postln;
+
 	if (lfo < ~thresh && ~belowThresh[id] == False) {
 		~variant[id] = ~variants[id].choose.asSymbol;
 		~belowThresh[id] = true;
-
-		// if (id == 1) { ~variant[id].postln; };
-
 		NetAddr("127.0.0.1", 7400).sendMsg("/reload", id, ~variant[id]);
 	};
 
